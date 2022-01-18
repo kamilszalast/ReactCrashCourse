@@ -1,7 +1,25 @@
+import { useContext } from "react";
 import Card from "../ui/Card";
 import classes from "./MeetupItem.module.css";
+import FavoritesContext from "../../store/favorites-context";
 
 export default function MeetupItem(props) {
+  const favoritexCtx = useContext(FavoritesContext);
+  const itemIsFavorite = favoritexCtx.itemIsFavorite(props.id);
+
+  function toggleFavoriteStatusHandler() {
+    if (itemIsFavorite) {
+      favoritexCtx.removeFavorite(props.id);
+    } else {
+      favoritexCtx.addFavorite({
+        id: props.id,
+        title: props.title,
+        description: props.description,
+        image: props.image,
+        address: props.address,
+      });
+    }
+  }
   return (
     //   Zwracamy pojedynczy komponent zawierajacy dane przekazane z obiektu w formacie JSON, propsy zostały zdefiniowane dla każdego elementu w pliku MeetupList
     <Card>
@@ -15,7 +33,9 @@ export default function MeetupItem(props) {
           <p>{props.description}</p>
         </div>
         <div className={classes.actions}>
-          <button>To Favorites</button>
+          <button onClick={toggleFavoriteStatusHandler}>
+            {itemIsFavorite ? "Remove from favorites" : "To Favorites"}
+          </button>
         </div>
       </li>
     </Card>
